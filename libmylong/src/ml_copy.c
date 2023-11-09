@@ -1,11 +1,9 @@
 #include "../inc/myLong.h"
 
-t_mylong *ml_copy(t_mylong *dst, t_mylong *src) {       
-    for (int i = 0; i < dst->len; i++) {
+void ml_copy(t_ml *dst, t_ml *src) {
+    for (int i = 0; i < dst->len; i ++) {
         if (src->len <= i)
-            dst->arr[i] = 0;
-        else
-            dst->arr[i] = src->arr[i];
+            break;
+        ml_set_block(dst, i, ml_get_block(src, i));
     }
-    return dst;
 }

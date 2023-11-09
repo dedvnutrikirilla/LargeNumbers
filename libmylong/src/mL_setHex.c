@@ -1,68 +1,37 @@
-#include "../inc/myLong.h"
+#include"../inc/myLong.h"
 
-t_mylong *ml_setHex(const char *s) {
-    const int slen = strlen(s);
+t_ml *ml_setHex(t_ml_base base, char *s) {
+    const size_t slen = strlen(s);
     if (slen == 0) {
-        t_mylong *mylong = ml_calloc(1);
-        mylong->arr[0] = 0;
+        t_ml *mylong = ml_calloc(ML_8, 1);
+        ((unsigned char *)(mylong->arr))[0] = 0;
         return mylong;
     }
+    
+    t_ml *mylong = ml_calloc(base, slen * 4); // it takes 4 bits to store any hex digit
 
-    t_mylong *mylong = ml_calloc(slen / BLOCK_SIZE);
-    int block_counter = 0;
-    int block_bound_counter = 0;
+    unsigned short block_bound = 0, block_cur = 0;
+
     for (int i = slen - 1; i >= 0; i--) {
-        uint32_t hexValue;
+        unsigned long hexVal; // 4 bits
         if (s[i] >= '0' && s[i] <= '9') {
-            hexValue = s[i] - '0';
+            hexVal = s[i] - '0';
         } else if (s[i] >= 'A' && s[i] <= 'F') {
-            hexValue = s[i] - 'A' + 10;
+            hexVal = s[i] - 'A' + 10;
         } else if (s[i] >= 'a' && s[i] <= 'f') {
-            hexValue = s[i] - 'a' + 10;
+            hexVal = s[i] - 'a' + 10;
         } else {
             fprintf(stderr, "Error: Non-hexadecimal character found.\n");
             ml_free(mylong);
             return NULL;
         }
-        mylong->arr[block_counter] += (hexValue << (block_bound_counter * 4));
-        // assuming we shift by 4 bits for each hex digit
-        //printf("string i position - %d, heVal - %x, block - %x\n", i, hexValue, mylong->arr[block_counter]);
-        block_bound_counter++;
-        if (block_bound_counter >= BLOCK_SIZE) {
-            block_counter++;
-            block_bound_counter = 0;
+
+        ml_set_block(mylong, block_cur, ml_get_block(mylong, block_cur) | ((hexVal << block_bound)));
+        block_bound += 4;
+        if (block_bound >= mylong->base) {
+            block_bound = 0;
+            block_cur++;
         }
-    }
-
-    return mylong;
-}
-
-t_mylong *ml_setHex2(const char *s) {
-    //convert a string of digits into mylong number
-    const int slen = strlen(s);
-    if (slen == 0) {
-        t_mylong *mylong = ml_calloc(1);
-        mylong->arr[0] = 0;
-        return mylong;
-    }
-
-    t_mylong *mylong = ml_calloc(slen / BLOCK_SIZE);
-    int block_counter = 0;
-    char *end;
-    int i = slen - BLOCK_SIZE;
-    
-    while(i >= 0) {
-        char schunk[9];
-        strncpy(schunk, s+i, BLOCK_SIZE);
-        mylong->arr[block_counter] = strtoul(schunk, &end, BASE_HEX);
-        i-= BLOCK_SIZE;
-        block_counter++;
-    }
-
-    if (i + BLOCK_SIZE >= 0) {
-        char schunk[9];
-        strncpy(schunk, s, i+BLOCK_SIZE);
-        mylong->arr[block_counter] = strtoul(schunk, &end, BASE_HEX);
     }
 
     return mylong;

@@ -1,27 +1,26 @@
 #include "../inc/myLong.h"
 
-t_mylong *ml_ADD (t_mylong *a, t_mylong *b) {
-    t_mylong *c = ml_calloc(a->len);
+t_ml *ml_ADD (t_ml *a, t_ml *b) {
+    const int len = a->len;
+    t_ml *c = ml_calloc(a->base, a->len * a->base);
 
-    unsigned long long carry = 0;
-    for (int i = 0; i < c->len; i++) {
-        uint32_t val1 = (i < a->len) ? a->arr[i] : 0;
-        uint32_t val2 = (i < b->len) ? b->arr[i] : 0;
-        carry = 0;
-        unsigned long long sum = (unsigned long)val1 + val2 + carry;
-        c->arr[i] = (unsigned long long)sum;
-        carry = (unsigned long long)(sum >> (BLOCK_SIZE * 4));
+    unsigned long long carry = 0ULL, val_a, val_b, sum; 
+    for (int i = 0; i < len; i++) {
+        val_a = (i < a->len) ? ml_get_block(a, i) : 0ULL;
+        val_b = (i < b->len) ? ml_get_block(b, i) : 0ULL;
+
+        sum = val_a + val_b + carry;
+        ml_set_block(c, i, sum);
+        carry = sum >> a->base;
+        printf("a=%llx; b= %llx\tsum=%llx; carry=%llx; carry=%u;\n", val_a, val_b, sum, carry, a->base);
     }
 
     if (carry > 0) {
-        // if there is a carry after last block
-        t_mylong *res = ml_calloc(c->len + 1);
-        ml_copy(res, c);
-        res->arr[res->len - 1] = carry;
-        t_mylong *temp = c;
-        c = res;
-        free(temp);
+        t_ml *new_c = ml_calloc(c->base, (c->len * c->base) + 1);
+        ml_copy(new_c, c);
+        ml_set_block(new_c, len, carry);
+        ml_free(c);
+        return new_c;
     }
-
     return c;
 }
