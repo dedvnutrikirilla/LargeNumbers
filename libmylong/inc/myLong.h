@@ -30,6 +30,7 @@ void ml_free(t_ml *mylong);
 void ml_out(t_ml *mylong);
 t_ml *ml_calloc(t_ml_base base, int nbits);
 void ml_copy(t_ml *dst, t_ml *src);
+int ml_compare(t_ml *a, t_ml *b);
 //
 
 // Shitty block operations
@@ -43,10 +44,14 @@ void ml_setOR_block32(void *arr, int index, unsigned long value);
 */
 //
 //Bitwises
-
+t_ml *ml_AND(t_ml *a, t_ml *b);
+t_ml *ml_OR(t_ml *a, t_ml *b);
+t_ml *ml_XOR(t_ml *a, t_ml *b);
+t_ml *ml_INV(t_ml *a);
 //
 
 // Arithms
-t_ml *ml_ADD (t_ml *a, t_ml *b);
+t_ml *ml_ADD(t_ml *a, t_ml *b);
+t_ml *ml_DIFF(t_ml *a, t_ml *b);
 //
 #endif

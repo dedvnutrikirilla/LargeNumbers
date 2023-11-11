@@ -12,7 +12,7 @@ t_ml *ml_ADD (t_ml *a, t_ml *b) {
         sum = val_a + val_b + carry;
         ml_set_block(c, i, sum);
         carry = sum >> a->base;
-        printf("a=%llx; b= %llx\tsum=%llx; carry=%llx; carry=%u;\n", val_a, val_b, sum, carry, a->base);
+        //printf("a=%llx; b= %llx\tsum=%llx; carry=%llx; carry=%u;\n", val_a, val_b, sum, carry, a->base);
     }
 
     if (carry > 0) {

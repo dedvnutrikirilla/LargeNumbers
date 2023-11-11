@@ -14,7 +14,9 @@ t_ml *ml_setHex(t_ml_base base, char *s) {
 
     for (int i = slen - 1; i >= 0; i--) {
         unsigned long hexVal; // 4 bits
-        if (s[i] >= '0' && s[i] <= '9') {
+        if (s[i] == ' ' || s[i] == '\t')
+            continue;
+        else if (s[i] >= '0' && s[i] <= '9') {
             hexVal = s[i] - '0';
         } else if (s[i] >= 'A' && s[i] <= 'F') {
             hexVal = s[i] - 'A' + 10;
