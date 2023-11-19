@@ -4,6 +4,11 @@
 // 1) no empty blocks in the beginning
 // 2) only positive numbers
 // 3) same base
+//
+// Returns: 
+// 1 if a > b
+// 0 if 1 == b
+// -1 if a < b
 
 int ml_compare(t_ml *a, t_ml *b) {
     if (a->len > b->len)

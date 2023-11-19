@@ -1,8 +1,8 @@
 #include "../inc/myLong.h"
 
 t_ml *ml_ADD (t_ml *a, t_ml *b) {
-    const int len = a->len;
-    t_ml *c = ml_calloc(a->base, a->len * a->base);
+    const int len = a->len > b->len ? a->len : b->len;
+    t_ml *c = ml_calloc(a->base, len * a->base);
 
     unsigned long long carry = 0ULL, val_a, val_b, sum; 
     for (int i = 0; i < len; i++) {
